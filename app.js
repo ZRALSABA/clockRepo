@@ -127,7 +127,12 @@ function renderAlarmDisplay() {
                             ${alarm.enabled ? '✓ Enabled' : '✗ Disabled'}
                         </span>
                     </div>
-                    <button class="danger" onclick="deleteAlarm('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button>
+                    <div style="display: flex; gap: 5px;">
+                        <button onclick="toggleAlarm('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">
+                            ${alarm.enabled ? 'Disable' : 'Enable'}
+                        </button>
+                        <button class="danger" onclick="deleteAlarm('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button>
+                    </div>
                 </div>
                 <div style="display: flex; gap: 5px; align-items: center;">
                     <input type="text" id="label-${alarm.id}" value="${alarm.label || ''}" placeholder="Add label..." style="flex: 1; padding: 5px; font-size: 12px;">
@@ -169,6 +174,16 @@ window.updateLabel = function(alarmId) {
         alarm.label = newLabel;
         alarmService.saveAlarms();
         alert('Label updated!');
+    }
+};
+
+// Global function for toggling alarm enabled/disabled
+window.toggleAlarm = function(alarmId) {
+    const alarm = alarmService.alarms.find(a => a.id === alarmId);
+    if (alarm) {
+        alarm.enabled = !alarm.enabled;
+        alarmService.saveAlarms();
+        renderAlarmDisplay();
     }
 };
 
