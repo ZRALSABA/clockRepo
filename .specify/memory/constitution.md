@@ -1,50 +1,75 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version: INITIAL → 1.0.0
+- Change Type: Initial constitution creation
+- Modified Principles: N/A (initial version)
+- Added Sections: All (initial version)
+- Removed Sections: None
+- Templates Status:
+  ✅ .specify/templates/plan-template.md - reviewed, compatible
+  ✅ .specify/templates/spec-template.md - reviewed, compatible
+  ✅ .specify/templates/tasks-template.md - reviewed, compatible
+- Follow-up TODOs:
+  - Define PROJECT_NAME
+  - Define all 5 core principles with names and descriptions
+  - Define Development Workflow section content
+  - Define Quality Standards section content
+-->
+
+# FirstProject Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. TODO(PRINCIPLE_1_NAME): Define First Core Principle
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+TODO(PRINCIPLE_1_DESCRIPTION): Define the first core principle for this project. Examples: Library-First, API-First, Test-First, Security-First, etc.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. TODO(PRINCIPLE_2_NAME): Define Second Core Principle
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+TODO(PRINCIPLE_2_DESCRIPTION): Define the second core principle. Examples: CLI Interface, Documentation-First, Observability, etc.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. TODO(PRINCIPLE_3_NAME): Define Third Core Principle
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+TODO(PRINCIPLE_3_DESCRIPTION): Define the third core principle. Mark as NON-NEGOTIABLE if it's a hard requirement.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. TODO(PRINCIPLE_4_NAME): Define Fourth Core Principle
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+TODO(PRINCIPLE_4_DESCRIPTION): Define the fourth core principle. Examples: Integration Testing, Performance Standards, etc.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. TODO(PRINCIPLE_5_NAME): Define Fifth Core Principle
+
+TODO(PRINCIPLE_5_DESCRIPTION): Define the fifth core principle. Examples: Simplicity, Versioning Policy, etc.
+
+## Development Workflow
+
+TODO(DEVELOPMENT_WORKFLOW): Define development workflow requirements. Examples:
+- Branch naming conventions
+- Code review requirements
+- Testing gates before merge
+- Deployment approval process
+- Documentation requirements
+
+## Quality Standards
+
+TODO(QUALITY_STANDARDS): Define quality standards. Examples:
+- Performance benchmarks
+- Code coverage requirements
+- Security scanning requirements
+- Accessibility compliance
+- Error handling standards
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other development practices and guidelines. All changes, features, and decisions MUST align with the principles defined above.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Amendment Process**:
+- Amendments require documentation of rationale and impact
+- Version MUST be incremented per semantic versioning rules
+- Migration plan required for breaking changes
+
+**Compliance**:
+- All specifications and plans MUST verify compliance with constitution principles
+- Complexity that violates principles MUST be explicitly justified
+- Regular reviews to ensure ongoing alignment
+
+**Version**: 1.0.0 | **Ratified**: 2026-03-12 | **Last Amended**: 2026-03-12
