@@ -55,6 +55,43 @@ export class AlarmForm {
                     <label for="alarm-label">Label (optional)</label>
                     <input type="text" id="alarm-label" maxlength="50" placeholder="e.g., Wake up">
                 </div>
+
+                <div class="form-group">
+                    <label for="alarm-sound">Alarm Sound</label>
+                    <select id="alarm-sound">
+                        <option value="beep">Beep (800 Hz)</option>
+                        <option value="chime">Chime (523 Hz)</option>
+                        <option value="buzz">Buzz (200 Hz)</option>
+                        <option value="bell">Bell (1046 Hz)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Repeat on (leave unchecked for one-time alarm)</label>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                            <input type="checkbox" name="recurrence" value="mon"> Mon
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                            <input type="checkbox" name="recurrence" value="tue"> Tue
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                            <input type="checkbox" name="recurrence" value="wed"> Wed
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                            <input type="checkbox" name="recurrence" value="thu"> Thu
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                            <input type="checkbox" name="recurrence" value="fri"> Fri
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                            <input type="checkbox" name="recurrence" value="sat"> Sat
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                            <input type="checkbox" name="recurrence" value="sun"> Sun
+                        </label>
+                    </div>
+                </div>
                 
                 <div class="form-group">
                     <button type="submit">Create Alarm</button>
@@ -81,18 +118,30 @@ export class AlarmForm {
         const timeInput = this.container.querySelector('#alarm-time');
         const labelInput = this.container.querySelector('#alarm-label');
         const timezoneSelect = this.container.querySelector('#alarm-timezone');
+        const soundSelect = this.container.querySelector('#alarm-sound');
         const cancelBtn = this.container.querySelector('#cancel-btn');
+        const recurrenceCheckboxes = this.container.querySelectorAll('input[name="recurrence"]');
 
         if (alarm) {
             timeInput.value = alarm.time;
             labelInput.value = alarm.label || '';
             timezoneSelect.value = alarm.timezone || 'Asia/Amman';
+            soundSelect.value = alarm.sound || 'beep';
             cancelBtn.style.display = 'inline-block';
+            
+            // Set recurrence checkboxes
+            recurrenceCheckboxes.forEach(cb => {
+                cb.checked = alarm.recurrence && alarm.recurrence.includes(cb.value);
+            });
         } else {
             timeInput.value = '';
             labelInput.value = '';
             timezoneSelect.value = 'Asia/Amman';
+            soundSelect.value = 'beep';
             cancelBtn.style.display = 'none';
+            
+            // Uncheck all recurrence checkboxes
+            recurrenceCheckboxes.forEach(cb => cb.checked = false);
         }
 
         this.clearErrors();
@@ -109,6 +158,8 @@ export class AlarmForm {
         const timeInput = this.container.querySelector('#alarm-time');
         const labelInput = this.container.querySelector('#alarm-label');
         const timezoneSelect = this.container.querySelector('#alarm-timezone');
+        const soundSelect = this.container.querySelector('#alarm-sound');
+        const recurrenceCheckboxes = this.container.querySelectorAll('input[name="recurrence"]:checked');
 
         const validation = this.validate();
         if (!validation.valid) {
@@ -116,10 +167,14 @@ export class AlarmForm {
             return;
         }
 
+        const recurrence = Array.from(recurrenceCheckboxes).map(cb => cb.value);
+
         const alarmData = {
             time: timeInput.value,
             label: labelInput.value.trim(),
-            timezone: timezoneSelect.value
+            timezone: timezoneSelect.value,
+            sound: soundSelect.value,
+            recurrence: recurrence.length > 0 ? recurrence : null
         };
 
         if (this.currentAlarm) {

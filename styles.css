@@ -9,6 +9,51 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
+    transition: background 0.3s, color 0.3s;
+}
+
+body.dark-theme {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-theme header,
+body.dark-theme section,
+body.dark-theme .modal-content {
+    background: #0f3460;
+    color: #e0e0e0;
+}
+
+body.dark-theme h1,
+body.dark-theme h2 {
+    color: #e0e0e0;
+}
+
+body.dark-theme p,
+body.dark-theme label {
+    color: #b0b0b0;
+}
+
+body.dark-theme input,
+body.dark-theme select {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    border-color: #555;
+}
+
+body.dark-theme button {
+    background: #e94560;
+}
+
+body.dark-theme button:hover {
+    background: #d63447;
+}
+
+body.dark-theme button.secondary {
+    background: #555;
+}
+
+body.dark-theme button.secondary:hover {
+    background: #666;
 }
 
 .container {

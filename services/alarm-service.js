@@ -60,6 +60,7 @@ export class AlarmService {
             timezone: alarmData.timezone || 'Asia/Amman',
             recurrence: alarmData.recurrence || null,
             snoozeDuration: alarmData.snoozeDuration || 5,
+            sound: alarmData.sound || 'beep',
             createdAt: new Date().toISOString(),
             lastTriggered: null
         };
@@ -132,15 +133,24 @@ export class AlarmService {
         };
 
         this.triggeringAlarms.push(trigger);
-        this.playAudio();
+        this.playAudio(alarm.sound);
         this.notifyTrigger(alarm);
     }
 
-    playAudio() {
+    playAudio(soundType = 'beep') {
         try {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.oscillator = this.audioContext.createOscillator();
-            this.oscillator.frequency.value = 800; // 800 Hz beep
+            
+            // Set frequency based on sound type
+            const sounds = {
+                beep: 800,
+                chime: 523.25,
+                buzz: 200,
+                bell: 1046.50
+            };
+            
+            this.oscillator.frequency.value = sounds[soundType] || 800;
             this.oscillator.connect(this.audioContext.destination);
             this.oscillator.start();
             

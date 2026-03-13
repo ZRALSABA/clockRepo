@@ -28,6 +28,21 @@ clockTimezoneSelect.addEventListener('change', (e) => {
 const alarmFormContainer = document.getElementById('alarm-form-container');
 const alarmForm = new AlarmForm(alarmFormContainer);
 
+// Theme toggle
+const themeToggle = document.getElementById('theme-toggle');
+const savedTheme = localStorage.getItem('theme') || 'light';
+if (savedTheme === 'dark') {
+    document.body.classList.add('dark-theme');
+    themeToggle.textContent = '☀️ Light';
+}
+
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-theme');
+    const isDark = document.body.classList.contains('dark-theme');
+    themeToggle.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+});
+
 alarmForm.onSubmit((alarmData) => {
     try {
         // Validate that alarm time is not in the past for the selected timezone
@@ -118,14 +133,41 @@ function renderAlarmDisplay() {
             const ampm = parseInt(hours24) >= 12 ? 'PM' : 'AM';
             const time12 = `${hours12}:${minutes} ${ampm}`;
             
+            // Calculate time in Jordan timezone
+            const now = new Date();
+            const [alarmHours, alarmMinutes] = alarm.time.split(':');
+            const alarmDate = new Date(now);
+            alarmDate.setHours(parseInt(alarmHours), parseInt(alarmMinutes), 0, 0);
+            
+            // Get time in alarm's timezone as a Date object
+            const alarmTZTime = new Date(alarmDate.toLocaleString('en-US', { timeZone: alarm.timezone }));
+            
+            // Convert to Jordan timezone
+            const jordanTime = new Date(alarmTZTime.toLocaleString('en-US', { timeZone: 'Asia/Amman' }));
+            const jordanHours24 = String(jordanTime.getHours()).padStart(2, '0');
+            const jordanMinutes = String(jordanTime.getMinutes()).padStart(2, '0');
+            const jordanHours12 = jordanTime.getHours() % 12 || 12;
+            const jordanAmpm = jordanTime.getHours() >= 12 ? 'PM' : 'AM';
+            const jordanTimeStr = `${jordanHours24}:${jordanMinutes} (${jordanHours12}:${jordanMinutes} ${jordanAmpm} Jordan Time)`;
+            
+            // Format recurrence
+            const dayLabels = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' };
+            const recurrenceText = alarm.recurrence && alarm.recurrence.length > 0
+                ? alarm.recurrence.map(d => dayLabels[d]).join(', ')
+                : 'One-time';
+            
             return `
             <div style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <div>
                         <strong>${alarm.time}</strong> <span style="color: #666;">(${time12})</span> ${timezoneNames[alarm.timezone] || alarm.timezone}
+                        ${alarm.timezone !== 'Asia/Amman' ? `<span style="color: #888;">(${jordanTimeStr})</span>` : ''}
                         <span style="color: ${alarm.enabled ? 'green' : 'gray'}">
                             ${alarm.enabled ? '✓ Enabled' : '✗ Disabled'}
                         </span>
+                        <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                            🔁 ${recurrenceText}
+                        </div>
                     </div>
                     <div style="display: flex; gap: 5px;">
                         <button onclick="toggleAlarm('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">
