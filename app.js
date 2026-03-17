@@ -98,7 +98,16 @@ alarmService.startTriggerDetection();
 // Simple alarm display for US1
 function renderAlarmDisplay() {
     const alarmListContainer = document.getElementById('alarm-list-container');
-    const alarms = alarmService.alarms;
+    const now = new Date();
+    const getNextTriggerMs = (alarm) => {
+        const [h, m] = alarm.time.split(':').map(Number);
+        const nowInTZ = new Date(now.toLocaleString('en-US', { timeZone: alarm.timezone }));
+        const target = new Date(nowInTZ);
+        target.setHours(h, m, 0, 0);
+        if (target <= nowInTZ) target.setDate(target.getDate() + 1);
+        return target - nowInTZ;
+    };
+    const alarms = [...alarmService.alarms].sort((a, b) => getNextTriggerMs(a) - getNextTriggerMs(b));
     
     if (alarms.length === 0) {
         alarmListContainer.innerHTML = '<p>No alarms set</p>';
