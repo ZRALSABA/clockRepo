@@ -4,6 +4,7 @@ import { AlarmService } from './services/alarm-service.js';
 import { Clock } from './components/clock.js';
 import { AlarmForm } from './components/alarm-form.js';
 import { AlarmTrigger } from './components/alarm-trigger.js';
+import { BUILD_NUMBER, BUILD_DATE } from './version.js';
 
 // Initialize services
 const storageService = new StorageService();
@@ -246,4 +247,7 @@ if (!storageService.isAvailable()) {
 }
 
 console.log('Alarm Clock initialized');
+
+const buildEl = document.getElementById('build-info');
+if (buildEl) buildEl.textContent = `Build #${BUILD_NUMBER} • ${BUILD_DATE}`;
 
