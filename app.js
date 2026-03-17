@@ -131,66 +131,63 @@ function renderAlarmDisplay() {
         'Australia/Sydney': 'Sydney'
     };
     
+    const enabledAlarms = alarms.filter(a => a.enabled);
+    const disabledAlarms = alarms.filter(a => !a.enabled);
+
+    const renderCard = (alarm) => {
+        const [hours24, minutes] = alarm.time.split(':');
+        const hours12 = parseInt(hours24) % 12 || 12;
+        const ampm = parseInt(hours24) >= 12 ? 'PM' : 'AM';
+        const time12 = `${hours12}:${minutes} ${ampm}`;
+
+        const alarmDate = new Date(now);
+        alarmDate.setHours(parseInt(hours24), parseInt(minutes), 0, 0);
+        const alarmTZTime = new Date(alarmDate.toLocaleString('en-US', { timeZone: alarm.timezone }));
+        const jordanTime = new Date(alarmTZTime.toLocaleString('en-US', { timeZone: 'Asia/Amman' }));
+        const jordanHours24 = String(jordanTime.getHours()).padStart(2, '0');
+        const jordanMin = String(jordanTime.getMinutes()).padStart(2, '0');
+        const jordanHours12 = jordanTime.getHours() % 12 || 12;
+        const jordanAmpm = jordanTime.getHours() >= 12 ? 'PM' : 'AM';
+        const jordanTimeStr = `${jordanHours24}:${jordanMin} (${jordanHours12}:${jordanMin} ${jordanAmpm} Jordan Time)`;
+
+        const dayLabels = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' };
+        const recurrenceText = alarm.recurrence && alarm.recurrence.length > 0
+            ? alarm.recurrence.map(d => dayLabels[d]).join(', ')
+            : 'One-time';
+
+        return `
+        <div style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; ${!alarm.enabled ? 'opacity: 0.6;' : ''}">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                    <strong>${alarm.time}</strong> <span style="color: #666;">(${time12})</span> ${timezoneNames[alarm.timezone] || alarm.timezone}
+                    ${alarm.timezone !== 'Asia/Amman' ? `<span style="color: #888;">(${jordanTimeStr})</span>` : ''}
+                    <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                        🔁 ${recurrenceText}
+                    </div>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="toggleAlarm('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">
+                        ${alarm.enabled ? 'Disable' : 'Enable'}
+                    </button>
+                    <button class="danger" onclick="deleteAlarm('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button>
+                </div>
+            </div>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <input type="text" id="label-${alarm.id}" value="${alarm.label || ''}" placeholder="Add label..." style="flex: 1; padding: 5px; font-size: 12px;">
+                <button onclick="updateLabel('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">Save Label</button>
+            </div>
+        </div>`;
+    };
+
     alarmListContainer.innerHTML = `
         <div style="margin-bottom: 15px;">
             <button class="danger" id="clear-all-btn">Clear All Alarms</button>
         </div>
-        ${alarms.map(alarm => {
-            // Convert 24-hour time to 12-hour format
-            const [hours24, minutes] = alarm.time.split(':');
-            const hours12 = parseInt(hours24) % 12 || 12;
-            const ampm = parseInt(hours24) >= 12 ? 'PM' : 'AM';
-            const time12 = `${hours12}:${minutes} ${ampm}`;
-            
-            // Calculate time in Jordan timezone
-            const now = new Date();
-            const [alarmHours, alarmMinutes] = alarm.time.split(':');
-            const alarmDate = new Date(now);
-            alarmDate.setHours(parseInt(alarmHours), parseInt(alarmMinutes), 0, 0);
-            
-            // Get time in alarm's timezone as a Date object
-            const alarmTZTime = new Date(alarmDate.toLocaleString('en-US', { timeZone: alarm.timezone }));
-            
-            // Convert to Jordan timezone
-            const jordanTime = new Date(alarmTZTime.toLocaleString('en-US', { timeZone: 'Asia/Amman' }));
-            const jordanHours24 = String(jordanTime.getHours()).padStart(2, '0');
-            const jordanMinutes = String(jordanTime.getMinutes()).padStart(2, '0');
-            const jordanHours12 = jordanTime.getHours() % 12 || 12;
-            const jordanAmpm = jordanTime.getHours() >= 12 ? 'PM' : 'AM';
-            const jordanTimeStr = `${jordanHours24}:${jordanMinutes} (${jordanHours12}:${jordanMinutes} ${jordanAmpm} Jordan Time)`;
-            
-            // Format recurrence
-            const dayLabels = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' };
-            const recurrenceText = alarm.recurrence && alarm.recurrence.length > 0
-                ? alarm.recurrence.map(d => dayLabels[d]).join(', ')
-                : 'One-time';
-            
-            return `
-            <div style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div>
-                        <strong>${alarm.time}</strong> <span style="color: #666;">(${time12})</span> ${timezoneNames[alarm.timezone] || alarm.timezone}
-                        ${alarm.timezone !== 'Asia/Amman' ? `<span style="color: #888;">(${jordanTimeStr})</span>` : ''}
-                        <span style="color: ${alarm.enabled ? 'green' : 'gray'}">
-                            ${alarm.enabled ? '✓ Enabled' : '✗ Disabled'}
-                        </span>
-                        <div style="font-size: 12px; color: #666; margin-top: 4px;">
-                            🔁 ${recurrenceText}
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 5px;">
-                        <button onclick="toggleAlarm('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">
-                            ${alarm.enabled ? 'Disable' : 'Enable'}
-                        </button>
-                        <button class="danger" onclick="deleteAlarm('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 5px; align-items: center;">
-                    <input type="text" id="label-${alarm.id}" value="${alarm.label || ''}" placeholder="Add label..." style="flex: 1; padding: 5px; font-size: 12px;">
-                    <button onclick="updateLabel('${alarm.id}')" style="padding: 5px 10px; font-size: 12px;">Save Label</button>
-                </div>
-            </div>
-        `;}).join('')}
+        <h3 style="margin: 15px 0 10px;">✅ Enabled Alarms</h3>
+        ${enabledAlarms.length > 0 ? enabledAlarms.map(renderCard).join('') : '<p style="color: #888;">No enabled alarms</p>'}
+        <h3 style="margin: 20px 0 10px;">🚫 Disabled Alarms</h3>
+        <p style="font-size: 12px; color: #888; margin-bottom: 10px;">You can re-enable or delete alarms from this section</p>
+        ${disabledAlarms.length > 0 ? disabledAlarms.map(renderCard).join('') : '<p style="color: #888;">No disabled alarms</p>'}
     `;
     
     // Add clear all handler

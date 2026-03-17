@@ -91,6 +91,7 @@ export class AlarmForm {
                             <input type="checkbox" name="recurrence" value="sun"> Sun
                         </label>
                     </div>
+                    <p style="font-size: 12px; color: #888; margin-top: 6px;">Leave all unchecked to set a one-time alarm</p>
                 </div>
                 
                 <div class="form-group">
