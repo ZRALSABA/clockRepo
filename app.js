@@ -16,17 +16,19 @@ const clockTimezoneSelect = document.getElementById('clock-timezone');
 const clock = new Clock(clockDisplay);
 
 // Set default to Jordan timezone
-clockTimezoneSelect.value = 'Asia/Amman';
-clock.start(timeService, 'Asia/Amman');
-
-// Handle clock timezone changes
-clockTimezoneSelect.addEventListener('change', (e) => {
-    clock.setTimezone(e.target.value);
-});
+clockTimezoneSelect.value = 'America/Chicago';
+clock.start(timeService, 'America/Chicago');
 
 // Initialize AlarmForm component
 const alarmFormContainer = document.getElementById('alarm-form-container');
 const alarmForm = new AlarmForm(alarmFormContainer);
+alarmForm.defaultTimezone = clockTimezoneSelect.value;
+
+// Handle clock timezone changes
+clockTimezoneSelect.addEventListener('change', (e) => {
+    clock.setTimezone(e.target.value);
+    alarmForm.defaultTimezone = e.target.value;
+});
 
 // Theme toggle
 const themeToggle = document.getElementById('theme-toggle');
@@ -143,12 +145,13 @@ function renderAlarmDisplay() {
         const alarmDate = new Date(now);
         alarmDate.setHours(parseInt(hours24), parseInt(minutes), 0, 0);
         const alarmTZTime = new Date(alarmDate.toLocaleString('en-US', { timeZone: alarm.timezone }));
-        const jordanTime = new Date(alarmTZTime.toLocaleString('en-US', { timeZone: 'Asia/Amman' }));
-        const jordanHours24 = String(jordanTime.getHours()).padStart(2, '0');
-        const jordanMin = String(jordanTime.getMinutes()).padStart(2, '0');
-        const jordanHours12 = jordanTime.getHours() % 12 || 12;
-        const jordanAmpm = jordanTime.getHours() >= 12 ? 'PM' : 'AM';
-        const jordanTimeStr = `${jordanHours24}:${jordanMin} (${jordanHours12}:${jordanMin} ${jordanAmpm} Jordan Time)`;
+        const prefTZ = clockTimezoneSelect.value;
+        const prefTime = new Date(alarmTZTime.toLocaleString('en-US', { timeZone: prefTZ }));
+        const prefHours24 = String(prefTime.getHours()).padStart(2, '0');
+        const prefMin = String(prefTime.getMinutes()).padStart(2, '0');
+        const prefHours12 = prefTime.getHours() % 12 || 12;
+        const prefAmpm = prefTime.getHours() >= 12 ? 'PM' : 'AM';
+        const prefTimeStr = `${prefHours24}:${prefMin} (${prefHours12}:${prefMin} ${prefAmpm} ${timezoneNames[prefTZ] || prefTZ} Time)`;
 
         const dayLabels = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' };
         const recurrenceText = alarm.recurrence && alarm.recurrence.length > 0
@@ -160,7 +163,7 @@ function renderAlarmDisplay() {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <div>
                     <strong>${alarm.time}</strong> <span style="color: #666;">(${time12})</span> ${timezoneNames[alarm.timezone] || alarm.timezone}
-                    ${alarm.timezone !== 'Asia/Amman' ? `<span style="color: #888;">(${jordanTimeStr})</span>` : ''}
+                    ${alarm.timezone !== prefTZ ? `<span style="color: #888;">(${prefTimeStr})</span>` : ''}
                     <div style="font-size: 12px; color: #666; margin-top: 4px;">
                         🔁 ${recurrenceText}
                     </div>

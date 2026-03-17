@@ -4,7 +4,15 @@ export class AlarmForm {
         this.onSubmitCallbacks = [];
         this.onCancelCallbacks = [];
         this.currentAlarm = null;
+        this._defaultTimezone = 'Asia/Amman';
         this.render();
+    }
+
+    get defaultTimezone() { return this._defaultTimezone; }
+    set defaultTimezone(tz) {
+        this._defaultTimezone = tz;
+        const sel = this.container.querySelector('#alarm-timezone');
+        if (sel) sel.value = tz;
     }
 
     render() {
@@ -126,7 +134,7 @@ export class AlarmForm {
         if (alarm) {
             timeInput.value = alarm.time;
             labelInput.value = alarm.label || '';
-            timezoneSelect.value = alarm.timezone || 'Asia/Amman';
+            timezoneSelect.value = alarm.timezone || this._defaultTimezone;
             soundSelect.value = alarm.sound || 'beep';
             cancelBtn.style.display = 'inline-block';
             
@@ -137,7 +145,7 @@ export class AlarmForm {
         } else {
             timeInput.value = '';
             labelInput.value = '';
-            timezoneSelect.value = 'Asia/Amman';
+            timezoneSelect.value = this._defaultTimezone;
             soundSelect.value = 'beep';
             cancelBtn.style.display = 'none';
             
